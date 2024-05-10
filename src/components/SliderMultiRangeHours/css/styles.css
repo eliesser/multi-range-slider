@@ -15,6 +15,22 @@
     border-bottom-right-radius: 0.313rem; */
     padding-top: 50px;
     /* width: 100%; */
+
+    .tooltip {
+      &:first-child {
+        .hour {
+          border-top-left-radius: 0.313rem;
+          border-bottom-left-radius: 0.313rem;
+        }
+      }
+
+      &:last-child {
+        .hour {
+          border-top-right-radius: 0.313rem;
+          border-bottom-right-radius: 0.313rem;
+        }
+      }
+    }
   }
 
   .buttons {
@@ -25,16 +41,6 @@
     height: 7px;
     width: 11px;
     position: relative;
-
-    &:first-child {
-      border-top-left-radius: 0.313rem;
-      border-bottom-left-radius: 0.313rem;
-    }
-
-    &:last-child {
-      border-top-right-radius: 0.313rem;
-      border-bottom-right-radius: 0.313rem;
-    }
 
     &.type-disable {
       background-color: #9d9d9d;
@@ -65,7 +71,6 @@
       width: 0.25rem;
       height: 0.25rem;
       margin: auto;
-      margin-top: 0.188rem;
       border-radius: 50%;
       position: absolute;
 
@@ -77,13 +82,17 @@
         background-color: white;
         border: 0.063rem solid rgb(255, 255, 255);
 
-        top: -2px;
+        top: 1px;
         left: -3px;
       }
 
       &.dot-any {
+        left: 0.188rem;
         background-color: transparent;
         border: 0.063rem solid transparent;
+
+        top: 1px;
+        left: -3px;
       }
     }
 
@@ -99,7 +108,7 @@
         z-index: 20;
         border-radius: 50%;
 
-        top: -9px;
+        top: -6px;
         left: -10px;
         width: 1rem;
         height: 1rem;
@@ -110,7 +119,7 @@
           width: 1.5rem;
           height: 1.5rem;
 
-          top: -9px;
+          top: -6px;
           left: -10px;
           width: 1rem;
           height: 1rem;
@@ -139,7 +148,7 @@
         z-index: 20;
         border-radius: 50%;
 
-        top: -9px;
+        top: -6px;
         left: -10px;
         width: 1rem;
         height: 1rem;
@@ -157,6 +166,47 @@
       left: -0.5rem;
 
       left: -14px;
+    }
+  }
+
+  .tooltip {
+    position: relative;
+    display: inline-block;
+
+    .tooltip-text {
+      font-size: 0.75rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      visibility: hidden;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      padding-left: 10px;
+      padding-right: 10px;
+      position: absolute;
+      z-index: 1;
+      text-wrap: nowrap;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+
+      &:after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+      }
+    }
+
+    &:hover .tooltip-text {
+      visibility: visible;
     }
   }
 }

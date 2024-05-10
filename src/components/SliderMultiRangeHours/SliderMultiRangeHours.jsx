@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import PropTypes from 'prop-types';
+
 import './css/styles.css';
 
 import { actions } from './constants';
@@ -11,7 +13,10 @@ import {
 } from './helpers';
 import { SliderNode } from './SliderNode';
 
-export const SliderMultiRangeHours = () => {
+export const SliderMultiRangeHours = ({
+  literalsButtons,
+  literalsTypesResponse,
+}) => {
   const [hours, setHours] = useState([]);
   const [dataToEdit, setDataToEdit] = useState({
     count: 0,
@@ -25,6 +30,10 @@ export const SliderMultiRangeHours = () => {
     initIndex: -1,
     endIndex: -1,
   });
+  /* const [editRange, setEditRange] = useState({
+    initIndex: -1,
+    endIndex: -1,
+  }); */
 
   useEffect(() => {
     const newHours = generateHours();
@@ -73,7 +82,49 @@ export const SliderMultiRangeHours = () => {
     if (actionAux === actions.none && !node.node)
       onSetTypeResponse(hours, getRangeByIndex(index, hours));
 
+    if (actionAux === actions.none && node.node) onEdit(node, index);
+
     if (actionAux === actions.delete && node.node) onDelete(node, index);
+  };
+
+  const onEdit = (/* node, index */) => {
+    /* setAction(actions.edit);
+
+    const range = findEditRange(node, index, hours);
+
+    console.log({
+      ...range,
+      mid: {
+        hour: node.hour,
+        index,
+        typeResponse: node.typeResponse,
+      },
+    }); */
+    /* const dataToEditAux = {
+      count: 1,
+      init: range.hourInit,
+      initIndex: range.hourIndex,
+      end: node.hour,
+    };
+
+    setDataToEdit(dataToEditAux);
+
+    onSelected(
+      node,
+      range.hourIndex,
+      actions.edit,
+      dataToEditAux,
+      range.typeResponse
+    );
+
+    let auxHours = [...hours];
+
+    auxHours[index] = {
+      ...node,
+      node: false,
+    };
+
+    setHours(auxHours); */
   };
 
   const onDelete = (node, index) => {
@@ -146,6 +197,10 @@ export const SliderMultiRangeHours = () => {
     if (node) console.log(index);
   };
 
+  /* const onSaveEdit = () => {
+    setAction(actions.none);
+  }; */
+
   const onEnableDelete = () => {
     setAction(actions.delete);
   };
@@ -155,17 +210,21 @@ export const SliderMultiRangeHours = () => {
       <div className='slider-container'>
         <div
           className={`slider ${
-            [actions.add, actions.edit, actions.delete].includes(action) &&
-            'active'
+            [actions.add, actions.edit, actions.delete].includes(action)
+              ? 'active'
+              : ''
           }`}
         >
-          <div className='hour type-disable'>
-            <div className='dot dot-any'></div>
+          <div className='tooltip'>
+            <div className='hour type-disable'>
+              <div className='dot dot-any'></div>
+            </div>
           </div>
           {hours.map((node, index) => (
             <SliderNode
               key={node.hour}
               {...node}
+              literalsTypesResponse={literalsTypesResponse}
               index={index}
               action={action}
               previewRange={previewRange}
@@ -180,16 +239,41 @@ export const SliderMultiRangeHours = () => {
             disabled={!hours.length || action !== actions.none}
             onClick={onEnableAdd}
           >
-            Add section
+            {literalsButtons.textButtonAdd}
           </button>
+          {/* <button
+            disabled={!hours.length || action !== actions.none}
+            hidden={action === actions.edit}
+            onClick={onEdit}
+          >
+            Edit type section
+          </button>
+          <button hidden={action !== actions.edit} onClick={onSaveEdit}>
+            Save type section
+          </button> */}
           <button
             onClick={() => onEnableDelete()}
             disabled={!hours.length || action !== actions.none}
           >
-            Delete section
+            {literalsButtons.textButtonDelete}
           </button>
         </div>
       </div>
     </>
   );
+};
+
+SliderMultiRangeHours.propTypes = {
+  literalsButtons: PropTypes.object.isRequired,
+  literalsTypesResponse: PropTypes.object.isRequired,
+};
+
+SliderMultiRangeHours.defaultProps = {
+  literalsButtons: { textButtonAdd: 'Add', textButtonDelete: 'Delete' },
+  literalsTypesResponse: {
+    'type-disable': 'Disable',
+    'type-automatic-response': 'Automatic Response',
+    'type-operator-assistance': 'Operator Assistance',
+    'type-smart-chat': 'SmartChat',
+  },
 };
