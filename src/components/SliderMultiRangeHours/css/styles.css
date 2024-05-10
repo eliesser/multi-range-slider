@@ -27,13 +27,13 @@
     position: relative;
 
     &:first-child {
-      /* border-top-left-radius: 0.313rem;
-      border-bottom-left-radius: 0.313rem */
+      border-top-left-radius: 0.313rem;
+      border-bottom-left-radius: 0.313rem;
     }
 
     &:last-child {
-      /* border-top-right-radius: 0.313rem;
-      border-bottom-right-radius: 0.313rem; */
+      border-top-right-radius: 0.313rem;
+      border-bottom-right-radius: 0.313rem;
     }
 
     &.type-disable {

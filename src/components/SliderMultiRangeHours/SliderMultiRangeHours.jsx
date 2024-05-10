@@ -159,6 +159,9 @@ export const SliderMultiRangeHours = () => {
             'active'
           }`}
         >
+          <div className='hour type-disable'>
+            <div className='dot dot-any'></div>
+          </div>
           {hours.map((node, index) => (
             <SliderNode
               key={node.hour}
