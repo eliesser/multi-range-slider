@@ -1,0 +1,166 @@
+.slider-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+
+  .slider {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    /* border-top-left-radius: 0.313rem;
+    border-bottom-left-radius: 0.313rem;
+    border-top-right-radius: 0.313rem;
+    border-bottom-right-radius: 0.313rem; */
+    padding-top: 50px;
+    /* width: 100%; */
+  }
+
+  .buttons {
+    margin-top: 3.125rem;
+  }
+
+  .hour {
+    height: 7px;
+    width: 11px;
+    position: relative;
+
+    &:first-child {
+      /* border-top-left-radius: 0.313rem;
+      border-bottom-left-radius: 0.313rem */
+    }
+
+    &:last-child {
+      /* border-top-right-radius: 0.313rem;
+      border-bottom-right-radius: 0.313rem; */
+    }
+
+    &.type-disable {
+      background-color: #9d9d9d;
+      border: 0.063rem solid #9d9d9d;
+    }
+
+    &.type-automatic-response {
+      background-color: #f1a776;
+      border: 0.063rem solid #f1a776;
+    }
+
+    &.type-operator-assistance {
+      background-color: #924e1e;
+      border: 0.063rem solid #924e1e;
+    }
+
+    &.type-smart-chat {
+      background-color: #dd611d;
+      border: 0.063rem solid #dd611d;
+    }
+
+    &.type-edit {
+      background-color: #e75252;
+      border: 0.063rem solid #e75252;
+    }
+
+    .dot {
+      width: 0.25rem;
+      height: 0.25rem;
+      margin: auto;
+      margin-top: 0.188rem;
+      border-radius: 50%;
+      position: absolute;
+
+      width: 3px;
+      height: 3px;
+
+      &.dot-00 {
+        left: 0.188rem;
+        background-color: white;
+        border: 0.063rem solid rgb(255, 255, 255);
+
+        top: -2px;
+        left: -3px;
+      }
+
+      &.dot-any {
+        background-color: transparent;
+        border: 0.063rem solid transparent;
+      }
+    }
+
+    &.node {
+      .dot-00,
+      .dot-any {
+        top: -0.688rem;
+        left: -0.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        background-color: #f1f1f1;
+        border: 0.063rem solid #f1a776;
+        z-index: 20;
+        border-radius: 50%;
+
+        top: -9px;
+        left: -10px;
+        width: 1rem;
+        height: 1rem;
+
+        &.edit {
+          top: -0.688rem;
+          left: -0.5rem;
+          width: 1.5rem;
+          height: 1.5rem;
+
+          top: -9px;
+          left: -10px;
+          width: 1rem;
+          height: 1rem;
+        }
+
+        &:hover {
+          box-shadow: 0px 0px 5px #dd611d;
+        }
+
+        &.focus:hover {
+          background-color: #dd611d;
+          border-color: white;
+        }
+      }
+    }
+
+    &.hour-hover:hover {
+      .dot-00,
+      .dot-any {
+        top: -0.688rem;
+        left: -0.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        background-color: #f1f1f1;
+        border: 0.063rem solid #f1a776;
+        z-index: 20;
+        border-radius: 50%;
+
+        top: -9px;
+        left: -10px;
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+
+    .hour-value {
+      font-size: 0.75rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+
+      position: absolute;
+      top: 1.25rem;
+      left: -0.5rem;
+
+      left: -14px;
+    }
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
