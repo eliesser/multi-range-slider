@@ -1,19 +1,18 @@
 import PropTypes from 'prop-types';
 
-import { Tooltip } from '@mui/material';
-
 import { actions, typesResponse } from './constants';
 
 export const SliderNode = ({
-  hour,
-  literalsTypesResponse,
-  typeResponse,
-  node,
-  index,
   action,
-  previewRange,
-  onSelected,
+  count,
+  hour,
+  index,
+  literalsTypesResponse,
+  node,
   onPreviewRange,
+  onSelected,
+  previewRange,
+  typeResponse,
 }) => {
   return (
     <div className='tooltip'>
@@ -21,10 +20,13 @@ export const SliderNode = ({
         className={`hour ${
           [actions.add, actions.edit].includes(action)
             ? 'hour-hover cursor-pointer'
-            : ([actions.none].includes(action) ||
-                ([actions.delete].includes(action) ? node : '')) &&
-              'cursor-pointer'
-        } ${node && 'node'} ${typeResponse} ${
+            : [actions.delete, actions.none].includes(action) &&
+              node &&
+              index > 0 &&
+              index + 1 < count
+            ? 'cursor-pointer'
+            : ''
+        } ${node ? 'node' : ''} ${typeResponse} ${
           index >= previewRange.initIndex && index < previewRange.endIndex
             ? typesResponse.typeEdit
             : ''
@@ -37,9 +39,11 @@ export const SliderNode = ({
             [hour.split(':')[0] + ':00', '23:59'].includes(hour)
               ? 'dot-00'
               : 'dot-any'
-          }  ${action === actions.edit && 'edit'} ${
-            [actions.delete].includes(action) && 'focus'
-          }`}
+          }  ${action === actions.edit ? 'edit' : ''} ${
+            [actions.delete].includes(action) && index > 0 && index + 1 < count
+              ? 'focus'
+              : ''
+          } ${index > 0 && index + 1 < count ? 'hover' : ''}`}
         >
           <span className='tooltip-text'>{`${
             node || action === actions.add
@@ -55,18 +59,6 @@ export const SliderNode = ({
     </div>
   );
 };
-{
-  /* <Tooltip
-  title={`${
-    node || action === actions.add
-      ? hour
-      : literalsTypesResponse[typeResponse]
-  }`}
-  placement='top'
-  TransitionProps={{ timeout: 0 }}
->
-    </Tooltip> */
-}
 
 SliderNode.propTypes = {
   hour: PropTypes.string.isRequired,
@@ -74,6 +66,7 @@ SliderNode.propTypes = {
   typeResponse: PropTypes.string.isRequired,
   node: PropTypes.bool.isRequired,
   index: PropTypes.number.isRequired,
+  count: PropTypes.number.isRequired,
   action: PropTypes.string.isRequired,
   previewRange: PropTypes.object.isRequired,
   onSelected: PropTypes.func.isRequired,

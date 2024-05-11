@@ -14,8 +14,15 @@ import {
 import { SliderNode } from './SliderNode';
 
 export const SliderMultiRangeHours = ({
-  literalsButtons,
-  literalsTypesResponse,
+  title = '',
+  hoursDb,
+  literalsButtons = { textButtonAdd: 'Add', textButtonDelete: 'Delete' },
+  literalsTypesResponse = {
+    'type-disable': 'Disable',
+    'type-automatic-response': 'Automatic Response',
+    'type-operator-assistance': 'Operator Assistance',
+    'type-smart-chat': 'SmartChat',
+  },
 }) => {
   const [hours, setHours] = useState([]);
   const [dataToEdit, setDataToEdit] = useState({
@@ -36,21 +43,19 @@ export const SliderMultiRangeHours = ({
   }); */
 
   useEffect(() => {
-    const newHours = generateHours();
+    const newHours = generateHours(hoursDb);
 
     setHours(newHours);
   }, []);
 
   const onSelected = (node, index, actionAux, dataToEditAux = dataToEdit) => {
-    if ([actions.add, actions.edit].includes(actionAux)) {
-      const auxHours = [...hours];
+    let auxHours = [...hours];
 
+    if ([actions.add, actions.edit].includes(actionAux)) {
       auxHours[index] = {
         ...node,
         node: true,
       };
-
-      setHours(auxHours);
 
       const count = dataToEditAux.count === 2 ? 0 : dataToEditAux.count + 1;
 
@@ -63,7 +68,7 @@ export const SliderMultiRangeHours = ({
 
       setDataToEdit(newDataToEdit);
 
-      onSetTypeResponse(auxHours, newDataToEdit);
+      auxHours = [...onSetTypeResponse(auxHours, newDataToEdit)];
 
       if (
         newDataToEdit.count === 0 &&
@@ -80,11 +85,24 @@ export const SliderMultiRangeHours = ({
     }
 
     if (actionAux === actions.none && !node.node)
-      onSetTypeResponse(hours, getRangeByIndex(index, hours));
+      auxHours = [
+        ...onSetTypeResponse(hours, {
+          count: 0,
+          ...getRangeByIndex(index, hours),
+        }),
+      ];
 
     if (actionAux === actions.none && node.node) onEdit(node, index);
 
-    if (actionAux === actions.delete && node.node) onDelete(node, index);
+    if (
+      actionAux === actions.delete &&
+      node.node &&
+      index > 0 &&
+      index + 1 < hours.length
+    )
+      onDelete(node, index);
+
+    setHours(auxHours);
   };
 
   const onEdit = (/* node, index */) => {
@@ -158,8 +176,10 @@ export const SliderMultiRangeHours = ({
     if (newDataToEdit.count === 0 && newDataToEdit.init && newDataToEdit.end) {
       const newHours = setTypeResponse(auxHours, newDataToEdit, action);
 
-      setHours(newHours);
+      return newHours;
     }
+
+    return auxHours;
   };
 
   const onEnableAdd = () => {
@@ -207,6 +227,7 @@ export const SliderMultiRangeHours = ({
 
   return (
     <>
+      <div>{title}</div>
       <div className='slider-container'>
         <div
           className={`slider ${
@@ -231,6 +252,7 @@ export const SliderMultiRangeHours = ({
               onSelected={onSelected}
               onPreviewRange={onPreviewRange}
               onMouseDownNode={onMouseDownNode}
+              count={hours.length}
             />
           ))}
         </div>
@@ -264,16 +286,8 @@ export const SliderMultiRangeHours = ({
 };
 
 SliderMultiRangeHours.propTypes = {
+  title: PropTypes.string.isRequired,
+  hoursDb: PropTypes.array.isRequired,
   literalsButtons: PropTypes.object.isRequired,
   literalsTypesResponse: PropTypes.object.isRequired,
-};
-
-SliderMultiRangeHours.defaultProps = {
-  literalsButtons: { textButtonAdd: 'Add', textButtonDelete: 'Delete' },
-  literalsTypesResponse: {
-    'type-disable': 'Disable',
-    'type-automatic-response': 'Automatic Response',
-    'type-operator-assistance': 'Operator Assistance',
-    'type-smart-chat': 'SmartChat',
-  },
 };
