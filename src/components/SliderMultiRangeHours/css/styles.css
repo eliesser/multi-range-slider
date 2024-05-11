@@ -63,8 +63,8 @@
     }
 
     &.type-edit {
-      background-color: #e75252;
-      border: 0.063rem solid #e75252;
+      background-color: black;
+      border: 0.063rem solid black;
     }
 
     .dot {
