@@ -238,10 +238,8 @@ export const SliderMultiRangeHours = ({
               : ''
           }`}
         >
-          <div className='tooltip'>
-            <div className='hour type-disable'>
-              <div className='dot dot-any'></div>
-            </div>
+          <div className='hour type-disable'>
+            <div className='dot dot-any'></div>
           </div>
           {hours.map((node, index) => (
             <SliderNode

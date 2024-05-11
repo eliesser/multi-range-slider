@@ -15,25 +15,30 @@ export const SliderNode = ({
   typeResponse,
 }) => {
   return (
-    <div className='tooltip'>
-      <div
-        className={`hour ${
-          [actions.add, actions.edit].includes(action)
-            ? 'hour-hover cursor-pointer'
-            : [actions.delete, actions.none].includes(action) &&
-              node &&
-              index > 0 &&
-              index + 1 < count
-            ? 'cursor-pointer'
-            : ''
-        } ${node ? 'node' : ''} ${typeResponse} ${
-          index >= previewRange.startIndex && index < previewRange.endIndex
-            ? typesResponse.typeEdit
-            : ''
-        }`}
-        onMouseEnter={() => onPreviewRange(index)}
-        onClick={() => onSelected({ hour, typeResponse, node }, index, action)}
-      >
+    <div
+      className={`hour ${
+        [actions.add, actions.edit].includes(action)
+          ? 'hour-hover cursor-pointer'
+          : [actions.delete, actions.none].includes(action) &&
+            node &&
+            index > 0 &&
+            index + 1 < count
+          ? 'cursor-pointer'
+          : ''
+      } ${node ? 'node' : ''} ${typeResponse} ${
+        index >= previewRange.startIndex && index < previewRange.endIndex
+          ? typesResponse.typeEdit
+          : ''
+      }`}
+      onMouseEnter={() => onPreviewRange(index)}
+      onClick={() => onSelected({ hour, typeResponse, node }, index, action)}
+    >
+      <div className='tooltip'>
+        <span className='tooltip-text'>{`${
+          node || action === actions.add
+            ? hour
+            : literalsTypesResponse[typeResponse]
+        }`}</span>
         <div
           className={`dot ${
             [hour.split(':')[0] + ':00', '23:59'].includes(hour)
@@ -44,17 +49,11 @@ export const SliderNode = ({
               ? 'focus'
               : ''
           } ${index > 0 && index + 1 < count ? 'hover' : ''}`}
-        >
-          <span className='tooltip-text'>{`${
-            node || action === actions.add
-              ? hour
-              : literalsTypesResponse[typeResponse]
-          }`}</span>
-        </div>
+        ></div>
+      </div>
 
-        <div className='hour-value'>
-          {[`${hour.split(':')[0]}:00`, '23:59'].includes(hour) && hour}
-        </div>
+      <div className='hour-value'>
+        {[`${hour.split(':')[0]}:00`, '23:59'].includes(hour) && hour}
       </div>
     </div>
   );
