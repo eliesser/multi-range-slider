@@ -7,12 +7,12 @@ export const setTypeResponse = (
   action,
   typeResponse = null
 ) => {
-  let dateRangeInit = getDateTimeByTimeHHMM(newDataToEdit.init);
+  let dateRangeInit = getDateTimeByTimeHHMM(newDataToEdit.start);
   let dateRangeEnd = getDateTimeByTimeHHMM(newDataToEdit.end);
 
   if (dateRangeEnd < dateRangeInit) {
     dateRangeInit = getDateTimeByTimeHHMM(newDataToEdit.end);
-    dateRangeEnd = getDateTimeByTimeHHMM(newDataToEdit.init);
+    dateRangeEnd = getDateTimeByTimeHHMM(newDataToEdit.start);
   }
 
   return hours.map((node) => {
@@ -26,7 +26,7 @@ export const setTypeResponse = (
           ? typesResponse.typeOperatorAssistance
           : getNextSortType(node.typeResponse),
         node:
-          node.hour === newDataToEdit.init
+          node.hour === newDataToEdit.start
             ? true
             : action === actions.add &&
               dateNode > dateRangeInit &&

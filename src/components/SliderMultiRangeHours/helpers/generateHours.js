@@ -32,8 +32,8 @@ export const generateHours = (hoursDb) => {
         hours,
         {
           count: 1,
-          init: h.start,
-          initIndex: -1,
+          start: h.start,
+          startIndex: -1,
           end: h.end,
         },
         actions.add,

@@ -17,7 +17,7 @@ export const getRangeByIndex = (index, hours) => {
   }
 
   return {
-    init: nodeInit.hour,
+    start: nodeInit.hour,
     end: nodeEnd.hour,
   };
 };

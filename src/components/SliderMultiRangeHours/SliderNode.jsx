@@ -27,7 +27,7 @@ export const SliderNode = ({
             ? 'cursor-pointer'
             : ''
         } ${node ? 'node' : ''} ${typeResponse} ${
-          index >= previewRange.initIndex && index < previewRange.endIndex
+          index >= previewRange.startIndex && index < previewRange.endIndex
             ? typesResponse.typeEdit
             : ''
         }`}

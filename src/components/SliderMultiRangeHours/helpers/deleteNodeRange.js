@@ -47,7 +47,7 @@ export const deleteNodeRange = (hours, node, index) => {
   }
 
   return {
-    init: nodeInit.hour,
+    start: nodeInit.hour,
     end: node.hour,
     typeResponse,
     auxHours,

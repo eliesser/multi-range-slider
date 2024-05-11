@@ -1,9 +1,9 @@
 import { typesResponse } from '../constants';
 
 export const findEditRange = (node, indexAux, hours) => {
-  let initHour;
-  let initIndex;
-  let initTypeResponse = typesResponse.typeDisable;
+  let startHour;
+  let startIndex;
+  let startTypeResponse = typesResponse.typeDisable;
 
   let endHour;
   let endIndex;
@@ -11,19 +11,19 @@ export const findEditRange = (node, indexAux, hours) => {
 
   for (let i = indexAux - 1; i >= 0; i--) {
     if (hours[i].node) {
-      initHour = hours[i].hour;
-      initIndex = i;
-      initTypeResponse = hours[i + 1].typeResponse;
+      startHour = hours[i].hour;
+      startIndex = i;
+      startTypeResponse = hours[i + 1].typeResponse;
       break;
     } else {
       if (i == 0) {
-        initTypeResponse = typesResponse.typeDisable;
-        initHour = hours[i].hour;
+        startTypeResponse = typesResponse.typeDisable;
+        startHour = hours[i].hour;
       } else {
         if (indexAux + 1 === hours.length) {
-          initTypeResponse = typesResponse.typeDisable;
+          startTypeResponse = typesResponse.typeDisable;
         } else {
-          initTypeResponse = hours[indexAux + 1].typeResponse;
+          startTypeResponse = hours[indexAux + 1].typeResponse;
         }
       }
     }
@@ -45,10 +45,10 @@ export const findEditRange = (node, indexAux, hours) => {
   }
 
   return {
-    init: {
-      hour: initHour,
-      index: initIndex,
-      typeResponse: initTypeResponse,
+    start: {
+      hour: startHour,
+      index: startIndex,
+      typeResponse: startTypeResponse,
     },
     end: {
       hour: endHour,
