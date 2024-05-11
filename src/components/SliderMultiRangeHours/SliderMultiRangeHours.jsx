@@ -69,7 +69,7 @@ export const SliderMultiRangeHours = ({
 
       setDataToEdit(newDataToEdit);
 
-      auxHours = [...onSetTypeResponse(auxHours, newDataToEdit)];
+      auxHours = onSetTypeResponse(auxHours, newDataToEdit);
 
       if (
         newDataToEdit.count === 0 &&
@@ -83,15 +83,18 @@ export const SliderMultiRangeHours = ({
 
         setAction(actions.none);
       }
+
+      setHours(auxHours);
     }
 
-    if (actionAux === actions.none && !node.node)
-      auxHours = [
-        ...onSetTypeResponse(hours, {
-          count: 0,
-          ...getRangeByIndex(index, hours),
-        }),
-      ];
+    if (actionAux === actions.none && !node.node) {
+      auxHours = onSetTypeResponse(auxHours, {
+        count: 0,
+        ...getRangeByIndex(index, auxHours),
+      });
+
+      setHours(auxHours);
+    }
 
     if (actionAux === actions.none && node.node) onEdit(node, index);
 
@@ -102,8 +105,6 @@ export const SliderMultiRangeHours = ({
       index + 1 < hours.length
     )
       onDelete(node, index);
-
-    setHours(auxHours);
   };
 
   const onEdit = (/* node, index */) => {
@@ -121,7 +122,7 @@ export const SliderMultiRangeHours = ({
     }); */
     /* const dataToEditAux = {
       count: 1,
-      start: range.hourInit,
+      start: range.hourStart,
       startIndex: range.hourIndex,
       end: node.hour,
     };

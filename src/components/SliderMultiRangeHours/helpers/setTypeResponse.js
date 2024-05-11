@@ -7,17 +7,17 @@ export const setTypeResponse = (
   action,
   typeResponse = null
 ) => {
-  let dateRangeInit = getDateTimeByTimeHHMM(newDataToEdit.start);
+  let dateRangeStart = getDateTimeByTimeHHMM(newDataToEdit.start);
   let dateRangeEnd = getDateTimeByTimeHHMM(newDataToEdit.end);
 
-  if (dateRangeEnd < dateRangeInit) {
-    dateRangeInit = getDateTimeByTimeHHMM(newDataToEdit.end);
+  if (dateRangeEnd < dateRangeStart) {
+    dateRangeStart = getDateTimeByTimeHHMM(newDataToEdit.end);
     dateRangeEnd = getDateTimeByTimeHHMM(newDataToEdit.start);
   }
 
-  return hours.map((node) => {
+  const auxHours = hours.map((node) => {
     const dateNode = getDateTimeByTimeHHMM(node.hour);
-    if (dateNode >= dateRangeInit && dateNode < dateRangeEnd) {
+    if (dateNode >= dateRangeStart && dateNode < dateRangeEnd) {
       return {
         ...node,
         typeResponse: typeResponse
@@ -26,15 +26,15 @@ export const setTypeResponse = (
           ? typesResponse.typeOperatorAssistance
           : getNextSortType(node.typeResponse),
         node:
-          node.hour === newDataToEdit.start
+          action !== actions.delete && node.hour === newDataToEdit.start
             ? true
             : action === actions.add &&
-              dateNode > dateRangeInit &&
+              dateNode > dateRangeStart &&
               dateNode < dateRangeEnd
             ? false
             : node.node,
       };
-    } else
+    } else {
       return {
         ...node,
         node:
@@ -42,5 +42,8 @@ export const setTypeResponse = (
             ? true
             : node.node,
       };
+    }
   });
+
+  return [...auxHours];
 };
