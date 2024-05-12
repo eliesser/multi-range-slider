@@ -111,8 +111,6 @@
       &.hour-hover:hover {
         .dot-00,
         .dot-any {
-          width: 1.5rem;
-          height: 1.5rem;
           background-color: #f1f1f1;
           border: 0.063rem solid #f1a776;
           z-index: 20;

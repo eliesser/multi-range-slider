@@ -1,6 +1,6 @@
 import { sortTypeResponse } from '../constants';
 
-export const getNextSortType = (typeResponse) => {
+export const getNextTypeResponse = (typeResponse) => {
   const index = sortTypeResponse.indexOf(typeResponse);
 
   const nextIndex = index === sortTypeResponse.length - 1 ? 0 : index + 1;

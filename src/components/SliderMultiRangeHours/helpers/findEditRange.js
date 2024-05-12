@@ -1,59 +1,42 @@
-import { typesResponse } from '../constants';
-
-export const findEditRange = (node, indexAux, hours) => {
-  let startHour;
-  let startIndex;
-  let startTypeResponse = typesResponse.typeDisable;
-
-  let endHour;
-  let endIndex;
-  let endTypeResponse;
-
-  for (let i = indexAux - 1; i >= 0; i--) {
-    if (hours[i].node) {
-      startHour = hours[i].hour;
-      startIndex = i;
-      startTypeResponse = hours[i + 1].typeResponse;
-      break;
-    } else {
-      if (i == 0) {
-        startTypeResponse = typesResponse.typeDisable;
-        startHour = hours[i].hour;
-      } else {
-        if (indexAux + 1 === hours.length) {
-          startTypeResponse = typesResponse.typeDisable;
-        } else {
-          startTypeResponse = hours[indexAux + 1].typeResponse;
-        }
-      }
-    }
-  }
-
-  for (let i = indexAux + 1; i < hours.length; i++) {
-    if (hours[i].node) {
-      endHour = hours[i].hour;
-      endIndex = i;
-      endTypeResponse = hours[i].typeResponse;
-      break;
-    } else {
-      if (i + 1 === hours.length) {
-        endHour = hours[i].hour;
-        endIndex = i;
-        endTypeResponse = typesResponse.typeDisable;
-      }
-    }
-  }
+export const findEditRange = (indexSelected, hours) => {
+  const left = findFirstNodeLeftByIndex(indexSelected, hours);
+  const right = findFirstNodeRightByIndex(indexSelected, hours);
 
   return {
-    start: {
-      hour: startHour,
-      index: startIndex,
-      typeResponse: startTypeResponse,
-    },
-    end: {
-      hour: endHour,
-      index: endIndex,
-      typeResponse: endTypeResponse,
+    left,
+    right,
+    selected: {
+      hour: hours[indexSelected].hour,
+      index: indexSelected,
+      typeResponse: hours[indexSelected].typeResponse,
     },
   };
+};
+
+export const findFirstNodeLeftByIndex = (indexSelected, hours) => {
+  if (indexSelected === 0) return null;
+
+  for (let index = indexSelected - 1; index >= 0; index--) {
+    if (hours[index].node) {
+      return {
+        hour: hours[index].hour,
+        index,
+        typeResponse: hours[index + 1].typeResponse,
+      };
+    }
+  }
+};
+
+export const findFirstNodeRightByIndex = (indexSelected, hours) => {
+  if (indexSelected + 1 === hours.length) return null;
+
+  for (let index = indexSelected + 1; index < hours.length; index++) {
+    if (hours[index].node) {
+      return {
+        hour: hours[index].hour,
+        index,
+        typeResponse: hours[index - 1].typeResponse,
+      };
+    }
+  }
 };

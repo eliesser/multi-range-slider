@@ -1,5 +1,5 @@
 import { actions, typesResponse } from '../constants';
-import { setTypeResponse } from './setTypeResponse';
+import { paintHourRange } from './paintHourRange';
 
 export const generateHours = (hoursDb) => {
   let hours = [];
@@ -28,7 +28,7 @@ export const generateHours = (hoursDb) => {
 
   if (hoursDb.length)
     hoursDb.forEach((h) => {
-      hours = setTypeResponse(
+      hours = paintHourRange(
         hours,
         {
           count: 1,

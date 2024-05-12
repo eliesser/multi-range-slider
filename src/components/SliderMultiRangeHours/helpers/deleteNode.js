@@ -1,6 +1,6 @@
 import { typesResponse } from '../constants';
 
-export const deleteNodeRange = (hours, node, index) => {
+export const deleteNode = (hours, node, index) => {
   let typeResponse = typesResponse.typeDisable;
   let nodeStart;
 

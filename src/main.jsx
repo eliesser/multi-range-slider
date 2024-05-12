@@ -18,9 +18,14 @@ const hour1 = [];
 
 const hour2 = [
   {
+    start: '00:00',
+    end: '09:00',
+    typeResponse: typesResponse.typeSmartChat,
+  },
+  {
     start: '09:00',
     end: '14:00',
-    typeResponse: typesResponse.typeOperatorAssistance,
+    typeResponse: typesResponse.typeAutomaticResponse,
   },
   {
     start: '14:00',
@@ -30,15 +35,12 @@ const hour2 = [
   {
     start: '15:00',
     end: '18:00',
-    typeResponse: typesResponse.typeOperatorAssistance,
-  },
-];
-
-const hour3 = [
-  {
-    start: '09:00',
-    end: '18:00',
     typeResponse: typesResponse.typeAutomaticResponse,
+  },
+  {
+    start: '18:00',
+    end: '23:59',
+    typeResponse: typesResponse.typeSmartChat,
   },
 ];
 
@@ -53,12 +55,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <SliderMultiRangeHours
       title='Martes'
       hoursDb={hour2}
-      literalsButtons={literalsButtons}
-      literalsTypesResponse={literalsTypesResponse}
-    />
-    <SliderMultiRangeHours
-      title='Miércoles'
-      hoursDb={hour3}
       literalsButtons={literalsButtons}
       literalsTypesResponse={literalsTypesResponse}
     />

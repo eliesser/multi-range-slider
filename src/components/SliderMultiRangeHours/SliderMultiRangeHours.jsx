@@ -6,12 +6,13 @@ import './css/styles.css';
 
 import { actions } from './constants';
 import {
-  deleteNodeRange,
+  deleteNode,
   generateHours,
   getRangeByIndex,
-  setTypeResponse,
+  paintHourRange,
 } from './helpers';
 import { SliderNode } from './SliderNode';
+import { findEditRange } from './helpers/findEditRange';
 
 export const SliderMultiRangeHours = ({
   title = '',
@@ -24,6 +25,7 @@ export const SliderMultiRangeHours = ({
     'type-smart-chat': 'SmartChat',
   },
 }) => {
+  const rangeMin = 2;
   const [hours, setHours] = useState([]);
   const [dataToEdit, setDataToEdit] = useState({
     count: 0,
@@ -37,10 +39,11 @@ export const SliderMultiRangeHours = ({
     startIndex: -1,
     endIndex: -1,
   });
-  /* const [editRange, setEditRange] = useState({
-    startIndex: -1,
-    endIndex: -1,
-  }); */
+  const [editRange, setEditRange] = useState({
+    left: null,
+    right: null,
+    selected: null,
+  });
 
   useEffect(() => {
     const newHours = generateHours(hoursDb);
@@ -49,9 +52,9 @@ export const SliderMultiRangeHours = ({
   }, []);
 
   const onSelected = (node, index, actionAux, dataToEditAux = dataToEdit) => {
-    let auxHours = [...hours];
+    if ([actions.add].includes(actionAux)) {
+      let auxHours = [...hours];
 
-    if ([actions.add, actions.edit].includes(actionAux)) {
       auxHours[index] = {
         ...node,
         node: true,
@@ -87,19 +90,25 @@ export const SliderMultiRangeHours = ({
       setHours(auxHours);
     }
 
-    if (actionAux === actions.none && !node.node) {
+    if ([actions.none].includes(actionAux) && !node.node) {
+      let auxHours = [...hours];
+
+      const rangeByIndex = getRangeByIndex(index, auxHours);
+
       auxHours = onSetTypeResponse(auxHours, {
         count: 0,
-        ...getRangeByIndex(index, auxHours),
+        ...rangeByIndex,
       });
 
       setHours(auxHours);
     }
 
-    if (actionAux === actions.none && node.node) onEdit(node, index);
+    if ([actions.none].includes(actionAux) && node.node) onEdit(node, index);
+
+    if ([actions.edit].includes(actionAux)) onSaveEdit(node, index);
 
     if (
-      actionAux === actions.delete &&
+      [actions.delete].includes(actionAux) &&
       node.node &&
       index > 0 &&
       index + 1 < hours.length
@@ -107,52 +116,15 @@ export const SliderMultiRangeHours = ({
       onDelete(node, index);
   };
 
-  const onEdit = (/* node, index */) => {
-    /* setAction(actions.edit);
+  const onEdit = (node, index) => {
+    const editRangeAux = findEditRange(index, hours);
 
-    const range = findEditRange(node, index, hours);
-
-    console.log({
-      ...range,
-      mid: {
-        hour: node.hour,
-        index,
-        typeResponse: node.typeResponse,
-      },
-    }); */
-    /* const dataToEditAux = {
-      count: 1,
-      start: range.hourStart,
-      startIndex: range.hourIndex,
-      end: node.hour,
-    };
-
-    setDataToEdit(dataToEditAux);
-
-    onSelected(
-      node,
-      range.hourIndex,
-      actions.edit,
-      dataToEditAux,
-      range.typeResponse
-    );
-
-    let auxHours = [...hours];
-
-    auxHours[index] = {
-      ...node,
-      node: false,
-    };
-
-    setHours(auxHours); */
+    setEditRange(editRangeAux);
+    setAction(actions.edit);
   };
 
   const onDelete = (node, index) => {
-    let { start, end, typeResponse, auxHours } = deleteNodeRange(
-      hours,
-      node,
-      index
-    );
+    let { start, end, typeResponse, auxHours } = deleteNode(hours, node, index);
 
     const newDataToEdit = {
       count: 0,
@@ -163,7 +135,7 @@ export const SliderMultiRangeHours = ({
 
     setDataToEdit(newDataToEdit);
 
-    const newHours = setTypeResponse(
+    const newHours = paintHourRange(
       auxHours,
       newDataToEdit,
       action,
@@ -176,7 +148,7 @@ export const SliderMultiRangeHours = ({
 
   const onSetTypeResponse = (auxHours, newDataToEdit) => {
     if (newDataToEdit.count === 0 && newDataToEdit.start && newDataToEdit.end) {
-      const newHours = setTypeResponse(auxHours, newDataToEdit, action);
+      const newHours = paintHourRange(auxHours, newDataToEdit, action);
 
       return newHours;
     }
@@ -195,11 +167,83 @@ export const SliderMultiRangeHours = ({
     });
   };
 
-  const onPreviewRange = (index) => {
+  const onSaveEdit = (node, index) => {
     if (
-      [actions.add, actions.edit].includes(action) &&
-      dataToEdit.count === 2
+      index <= editRange?.right?.index - rangeMin &&
+      index >= editRange?.left?.index + rangeMin
     ) {
+      const auxHours = [...hours];
+
+      auxHours[index].node = true;
+      auxHours[editRange.selected.index].node = false;
+
+      setHours(auxHours);
+      setAction(actions.none);
+    }
+  };
+
+  const onPreviewRange = (index) => {
+    if ([actions.edit].includes(action)) {
+      let start = null;
+      let startIndex = null;
+      let end = null;
+      let typeResponse = null;
+
+      if (index > editRange?.right?.index - rangeMin) {
+        start = editRange.selected.hour;
+        startIndex = editRange.selected.index;
+        end = hours[editRange?.right?.index - rangeMin].hour;
+        typeResponse = editRange.left.typeResponse;
+      } else {
+        if (index < editRange?.left?.index + rangeMin) {
+          start = hours[editRange?.left?.index + rangeMin].hour;
+          startIndex = hours[editRange?.left?.index + rangeMin].index;
+          end = editRange.selected.hour;
+          typeResponse = editRange.right.typeResponse;
+        } else {
+          if (editRange.preview && index > editRange.preview.index) {
+            start = editRange.left.hour;
+            startIndex = editRange.left.index;
+            end = hours[index].hour;
+            typeResponse = editRange.left.typeResponse;
+          }
+
+          if (editRange.preview && index < editRange.preview.index) {
+            start = hours[index].hour;
+            startIndex = hours[index].index;
+            end = editRange.right.hour;
+            typeResponse = editRange.right.typeResponse;
+          }
+        }
+      }
+
+      const newDataToEdit = {
+        count: 0,
+        start,
+        startIndex,
+        end,
+      };
+
+      const newHours = paintHourRange(
+        hours,
+        newDataToEdit,
+        actions.edit,
+        typeResponse
+      );
+
+      setHours(newHours);
+
+      setEditRange({
+        ...editRange,
+        preview: {
+          hour: hours[index].hour,
+          index,
+          typeResponse: hours[index].typeResponse,
+        },
+      });
+    }
+
+    if ([actions.add].includes(action) && dataToEdit.count === 2) {
       let startIndex = dataToEdit.startIndex;
       let endIndex = index;
 
@@ -219,10 +263,6 @@ export const SliderMultiRangeHours = ({
     if (node) console.log(index);
   };
 
-  /* const onSaveEdit = () => {
-    setAction(actions.none);
-  }; */
-
   const onEnableDelete = () => {
     setAction(actions.delete);
   };
@@ -231,13 +271,7 @@ export const SliderMultiRangeHours = ({
     <>
       <div>{title}</div>
       <div className='slider-container'>
-        <div
-          className={`slider ${
-            [actions.add, actions.edit, actions.delete].includes(action)
-              ? 'active'
-              : ''
-          }`}
-        >
+        <div className='slider'>
           <div className='hour type-disable'>
             <div className='dot dot-any'></div>
           </div>
@@ -249,13 +283,16 @@ export const SliderMultiRangeHours = ({
               index={index}
               action={action}
               previewRange={previewRange}
+              editRange={editRange}
               onSelected={onSelected}
               onPreviewRange={onPreviewRange}
               onMouseDownNode={onMouseDownNode}
+              rangeMin={rangeMin}
               count={hours.length}
             />
           ))}
         </div>
+
         <div className='buttons'>
           <button
             disabled={!hours.length || action !== actions.none}
@@ -263,16 +300,6 @@ export const SliderMultiRangeHours = ({
           >
             {literalsButtons.textButtonAdd}
           </button>
-          {/* <button
-            disabled={!hours.length || action !== actions.none}
-            hidden={action === actions.edit}
-            onClick={onEdit}
-          >
-            Edit type section
-          </button>
-          <button hidden={action !== actions.edit} onClick={onSaveEdit}>
-            Save type section
-          </button> */}
           <button
             onClick={() => onEnableDelete()}
             disabled={!hours.length || action !== actions.none}

@@ -1,7 +1,7 @@
 import { actions, typesResponse } from '../constants';
-import { getDateTimeByTimeHHMM, getNextSortType } from '../helpers';
+import { getDateTimeByTimeHHMM, getNextTypeResponse } from '.';
 
-export const setTypeResponse = (
+export const paintHourRange = (
   hours,
   newDataToEdit,
   action,
@@ -24,9 +24,10 @@ export const setTypeResponse = (
           ? typeResponse
           : action === actions.add
           ? typesResponse.typeOperatorAssistance
-          : getNextSortType(node.typeResponse),
+          : getNextTypeResponse(node.typeResponse),
         node:
-          action !== actions.delete && node.hour === newDataToEdit.start
+          ![actions.edit, actions.delete].includes(action) &&
+          node.hour === newDataToEdit.start
             ? true
             : action === actions.add &&
               dateNode > dateRangeStart &&
@@ -38,7 +39,8 @@ export const setTypeResponse = (
       return {
         ...node,
         node:
-          action !== actions.delete && node.hour === newDataToEdit.end
+          ![actions.edit, actions.delete].includes(action) &&
+          node.hour === newDataToEdit.end
             ? true
             : node.node,
       };
