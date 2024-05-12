@@ -181,11 +181,13 @@ export const SliderMultiRangeHours = ({
     ) {
       const auxHours = [...hours];
 
-      auxHours[index].node = true;
-      auxHours[editRange.selected.index].node = false;
+      if (index !== editRange.selected.index) {
+        auxHours[index].node = true;
+        auxHours[editRange.selected.index].node = false;
+      }
 
-      setHours(auxHours);
       setAction(actions.none);
+      setHours(auxHours);
     }
   };
 
