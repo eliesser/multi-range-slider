@@ -51,64 +51,18 @@ export const SliderMultiRangeHours = ({
     setHours(newHours);
   }, []);
 
-  const onSelected = (node, index, actionAux, dataToEditAux = dataToEdit) => {
-    if ([actions.add].includes(actionAux)) {
-      let auxHours = [...hours];
+  const onSelected = (node, index, action, dataToEditAux = dataToEdit) => {
+    if ([actions.add].includes(action)) onAdd(node, index, dataToEditAux);
 
-      auxHours[index] = {
-        ...node,
-        node: true,
-      };
+    if ([actions.none].includes(action) && !node.node)
+      onChangeTypeResponse(index);
 
-      const count = dataToEditAux.count === 2 ? 0 : dataToEditAux.count + 1;
+    if ([actions.none].includes(action) && node.node) onEdit(index);
 
-      const newDataToEdit = {
-        count,
-        start: dataToEditAux.count === 1 ? node.hour : dataToEditAux.start,
-        startIndex:
-          dataToEditAux.count === 1 ? index : dataToEditAux.startIndex,
-        end: dataToEditAux.count === 2 ? node.hour : dataToEditAux.end,
-      };
-
-      setDataToEdit(newDataToEdit);
-
-      auxHours = onSetTypeResponse(auxHours, newDataToEdit);
-
-      if (
-        newDataToEdit.count === 0 &&
-        newDataToEdit.start &&
-        newDataToEdit.end
-      ) {
-        setPreviewRange({
-          startIndex: -1,
-          endIndex: -1,
-        });
-
-        setAction(actions.none);
-      }
-
-      setHours(auxHours);
-    }
-
-    if ([actions.none].includes(actionAux) && !node.node) {
-      let auxHours = [...hours];
-
-      const rangeByIndex = getRangeByIndex(index, auxHours);
-
-      auxHours = onSetTypeResponse(auxHours, {
-        count: 0,
-        ...rangeByIndex,
-      });
-
-      setHours(auxHours);
-    }
-
-    if ([actions.none].includes(actionAux) && node.node) onEdit(node, index);
-
-    if ([actions.edit].includes(actionAux)) onSaveEdit(node, index);
+    if ([actions.edit].includes(action)) onSaveEdit(node, index);
 
     if (
-      [actions.delete].includes(actionAux) &&
+      [actions.delete].includes(action) &&
       node.node &&
       index > 0 &&
       index + 1 < hours.length
@@ -116,7 +70,53 @@ export const SliderMultiRangeHours = ({
       onDelete(node, index);
   };
 
-  const onEdit = (node, index) => {
+  const onChangeTypeResponse = (index) => {
+    let auxHours = [...hours];
+
+    const rangeByIndex = getRangeByIndex(index, auxHours);
+
+    auxHours = onPaintHourRange(auxHours, {
+      count: 0,
+      ...rangeByIndex,
+    });
+
+    setHours(auxHours);
+  };
+
+  const onAdd = (node, index, dataToEditAux) => {
+    let auxHours = [...hours];
+
+    auxHours[index] = {
+      ...node,
+      node: true,
+    };
+
+    const count = dataToEditAux.count === 2 ? 0 : dataToEditAux.count + 1;
+
+    const newDataToEdit = {
+      count,
+      start: dataToEditAux.count === 1 ? node.hour : dataToEditAux.start,
+      startIndex: dataToEditAux.count === 1 ? index : dataToEditAux.startIndex,
+      end: dataToEditAux.count === 2 ? node.hour : dataToEditAux.end,
+    };
+
+    setDataToEdit(newDataToEdit);
+
+    auxHours = onPaintHourRange(auxHours, newDataToEdit);
+
+    if (newDataToEdit.count === 0 && newDataToEdit.start && newDataToEdit.end) {
+      setPreviewRange({
+        startIndex: -1,
+        endIndex: -1,
+      });
+
+      setAction(actions.none);
+    }
+
+    setHours(auxHours);
+  };
+
+  const onEdit = (index) => {
     const editRangeAux = findEditRange(index, hours);
 
     setEditRange(editRangeAux);
@@ -146,7 +146,7 @@ export const SliderMultiRangeHours = ({
     setAction(actions.none);
   };
 
-  const onSetTypeResponse = (auxHours, newDataToEdit) => {
+  const onPaintHourRange = (auxHours, newDataToEdit) => {
     if (newDataToEdit.count === 0 && newDataToEdit.start && newDataToEdit.end) {
       const newHours = paintHourRange(auxHours, newDataToEdit, action);
 
