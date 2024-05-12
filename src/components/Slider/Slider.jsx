@@ -12,9 +12,19 @@ const literalsTypesResponse = {
 
 const hour1 = [
   {
+    start: '00:00',
+    end: '15:00',
+    typeResponse: typesResponse.typeDisable,
+  },
+  {
     start: '15:00',
     end: '19:00',
     typeResponse: typesResponse.typeSmartChat,
+  },
+  {
+    start: '19:00',
+    end: '23:59',
+    typeResponse: typesResponse.typeDisable,
   },
 ];
 

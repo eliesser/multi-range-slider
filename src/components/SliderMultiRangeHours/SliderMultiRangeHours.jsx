@@ -16,16 +16,11 @@ import { findEditRange } from './helpers/findEditRange';
 import { generateHoursDB } from './helpers/generateHoursDB';
 
 export const SliderMultiRangeHours = ({
-  title = '',
+  title,
   hoursDB,
   setHoursDB,
-  literalsButtons = { textButtonAdd: 'Add', textButtonDelete: 'Delete' },
-  literalsTypesResponse = {
-    'type-disable': 'Disable',
-    'type-automatic-response': 'Automatic Response',
-    'type-operator-assistance': 'Operator Assistance',
-    'type-smart-chat': 'SmartChat',
-  },
+  literalsButtons,
+  literalsTypesResponse,
 }) => {
   const rangeMin = 2;
   const [hours, setHours] = useState([]);
@@ -107,11 +102,13 @@ export const SliderMultiRangeHours = ({
     updatedHours = onPaintHourRange(updatedHours, newDataToEdit);
 
     if (newDataToEdit.count === 0 && newDataToEdit.start && newDataToEdit.end) {
+      const hoursDBAux = generateHoursDB(updatedHours);
+
+      setHoursDB(hoursDBAux);
       setPreviewRange({
         startIndex: -1,
         endIndex: -1,
       });
-
       setAction(actions.none);
     }
 
@@ -186,8 +183,11 @@ export const SliderMultiRangeHours = ({
         auxHours[editRange.selected.index].node = false;
       }
 
-      setAction(actions.none);
+      const hoursDBAux = generateHoursDB(auxHours);
+
+      setHoursDB(hoursDBAux);
       setHours(auxHours);
+      setAction(actions.none);
     }
   };
 

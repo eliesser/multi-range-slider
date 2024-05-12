@@ -5,9 +5,11 @@
   justify-content: center;
 
   .slider-container-border {
-    border: 1px solid #dd611d;
-    border-radius: 10px;
-    padding: 20px;
+    border: 0.063rem solid #dd611d;
+    border-radius: 0.625rem;
+    padding: 0.625rem;
+    max-width: 78.125rem;
+    width: 100%;
 
     .slider {
       display: flex;
@@ -147,25 +149,25 @@
       display: flex;
       justify-content: end;
       margin-top: 3.125rem;
-      gap: 10px;
+      gap: 0.625rem;
 
       .button {
-        border: 1px solid #dd611d;
+        border: 0.063rem solid #dd611d;
         color: #dd611d;
         background-color: white;
-        border-radius: 15px;
-        padding: 10px;
+        border-radius: 0.625rem;
+        padding: 0.625rem;
 
         &:hover {
           cursor: pointer;
-          border: 1px solid #dd611d;
+          border: 0.063rem solid #dd611d;
           color: white;
           background-color: #dd611d;
         }
 
         &.disable {
           cursor: auto;
-          border: 1px solid #9d9d9d;
+          border: 0.063rem solid #9d9d9d;
           color: white;
           background-color: #9d9d9d;
         }
@@ -176,7 +178,7 @@
       display: inline-block;
       height: 0.438rem;
       width: 0.688rem;
-      top: -0px;
+      top: -0rem;
       position: absolute;
 
       .tooltip-text {
