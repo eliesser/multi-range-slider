@@ -148,9 +148,9 @@ SliderNode.propTypes = {
   index: PropTypes.number.isRequired,
   literalsTypesResponse: PropTypes.object.isRequired,
   node: PropTypes.bool.isRequired,
-  onPreviewRange: PropTypes.func.isRequired,
-  onSelected: PropTypes.func.isRequired,
   previewRange: PropTypes.object.isRequired,
   typeResponse: PropTypes.string.isRequired,
   rangeMin: PropTypes.number.isRequired,
+  onPreviewRange: PropTypes.func.isRequired,
+  onSelected: PropTypes.func.isRequired,
 };
