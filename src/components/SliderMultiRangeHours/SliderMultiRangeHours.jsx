@@ -77,6 +77,10 @@ export const SliderMultiRangeHours = ({
       ...rangeByIndex,
     });
 
+    const hoursDBAux = generateHoursDB(updatedHours);
+
+    setHoursDB(hoursDBAux);
+
     setHours(updatedHours);
   };
 
