@@ -4,7 +4,7 @@ import { actions, typesResponse } from './constants';
 
 export const SliderNode = ({
   action,
-  count,
+  cantHour,
   editRange,
   hour,
   index,
@@ -32,10 +32,12 @@ export const SliderNode = ({
   }
 
   if (
-    [actions.delete, actions.none].includes(action) &&
-    node &&
-    index > 0 &&
-    index + 1 < count
+    ([actions.delete, actions.none].includes(action) &&
+      node &&
+      index > 0 &&
+      index + 1 < cantHour) ||
+    ([actions.none].includes(action) && !node) ||
+    [actions.add].includes(action)
   ) {
     showCursorPointer = true;
   } else {
@@ -66,7 +68,6 @@ export const SliderNode = ({
         showCursorPointer = true;
       } else {
         showHover = false;
-        showCursorPointer = false;
       }
 
       if (
@@ -91,10 +92,10 @@ export const SliderNode = ({
 
   if ([hour.split(':')[0] + ':00', '23:59'].includes(hour)) showDot00 = true;
 
-  if ([actions.delete].includes(action) && index > 0 && index + 1 < count)
+  if ([actions.delete].includes(action) && index > 0 && index + 1 < cantHour)
     showDotFocus = true;
 
-  if (index > 0 && index + 1 < count) showDotHover = true;
+  if (index > 0 && index + 1 < cantHour) showDotHover = true;
 
   if ([`${hour.split(':')[0]}:00`, '23:59'].includes(hour))
     showLabelHour = true;
@@ -141,7 +142,7 @@ export const SliderNode = ({
 
 SliderNode.propTypes = {
   action: PropTypes.string.isRequired,
-  count: PropTypes.number.isRequired,
+  cantHour: PropTypes.number.isRequired,
   editRange: PropTypes.object.isRequired,
   hour: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
