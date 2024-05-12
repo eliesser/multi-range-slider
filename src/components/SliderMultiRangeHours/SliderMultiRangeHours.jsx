@@ -13,10 +13,12 @@ import {
 } from './helpers';
 import { SliderNode } from './SliderNode';
 import { findEditRange } from './helpers/findEditRange';
+import { generateHoursDB } from './helpers/generateHoursDB';
 
 export const SliderMultiRangeHours = ({
   title = '',
-  hoursDb,
+  hoursDB,
+  setHoursDB,
   literalsButtons = { textButtonAdd: 'Add', textButtonDelete: 'Delete' },
   literalsTypesResponse = {
     'type-disable': 'Disable',
@@ -46,7 +48,7 @@ export const SliderMultiRangeHours = ({
   });
 
   useEffect(() => {
-    const newHours = generateHours(hoursDb);
+    const newHours = generateHours(hoursDB);
 
     setHours(newHours);
   }, []);
@@ -71,22 +73,22 @@ export const SliderMultiRangeHours = ({
   };
 
   const onChangeTypeResponse = (index) => {
-    let auxHours = [...hours];
+    let updatedHours = [...hours];
 
-    const rangeByIndex = getRangeByIndex(index, auxHours);
+    const rangeByIndex = getRangeByIndex(index, updatedHours);
 
-    auxHours = onPaintHourRange(auxHours, {
+    updatedHours = onPaintHourRange(updatedHours, {
       count: 0,
       ...rangeByIndex,
     });
 
-    setHours(auxHours);
+    setHours(updatedHours);
   };
 
   const onAdd = (node, index, dataToEditAux) => {
-    let auxHours = [...hours];
+    let updatedHours = [...hours];
 
-    auxHours[index] = {
+    updatedHours[index] = {
       ...node,
       node: true,
     };
@@ -102,7 +104,7 @@ export const SliderMultiRangeHours = ({
 
     setDataToEdit(newDataToEdit);
 
-    auxHours = onPaintHourRange(auxHours, newDataToEdit);
+    updatedHours = onPaintHourRange(updatedHours, newDataToEdit);
 
     if (newDataToEdit.count === 0 && newDataToEdit.start && newDataToEdit.end) {
       setPreviewRange({
@@ -113,14 +115,16 @@ export const SliderMultiRangeHours = ({
       setAction(actions.none);
     }
 
-    setHours(auxHours);
+    setHours(updatedHours);
   };
 
   const onEdit = (index) => {
-    const editRangeAux = findEditRange(index, hours);
+    if (index > 0 && index + 1 < hours.length) {
+      const editRangeAux = findEditRange(index, hours);
 
-    setEditRange(editRangeAux);
-    setAction(actions.edit);
+      setEditRange(editRangeAux);
+      setAction(actions.edit);
+    }
   };
 
   const onDelete = (node, index) => {
@@ -142,6 +146,9 @@ export const SliderMultiRangeHours = ({
       typeResponse
     );
 
+    const hoursDBAux = generateHoursDB(newHours);
+
+    setHoursDB(hoursDBAux);
     setHours(newHours);
     setAction(actions.none);
   };
@@ -194,26 +201,22 @@ export const SliderMultiRangeHours = ({
         startIndex = editRange.selected.index;
         end = hours[editRange?.right?.index - rangeMin].hour;
         typeResponse = editRange.left.typeResponse;
-      } else {
-        if (index < editRange?.left?.index + rangeMin) {
-          start = hours[editRange?.left?.index + rangeMin].hour;
-          startIndex = hours[editRange?.left?.index + rangeMin].index;
-          end = editRange.selected.hour;
+      } else if (index < editRange?.left?.index + rangeMin) {
+        start = hours[editRange?.left?.index + rangeMin].hour;
+        startIndex = hours[editRange?.left?.index + rangeMin].index;
+        end = editRange.selected.hour;
+        typeResponse = editRange.right.typeResponse;
+      } else if (editRange.preview) {
+        if (index > editRange.preview.index) {
+          start = editRange.left.hour;
+          startIndex = editRange.left.index;
+          end = hours[index].hour;
+          typeResponse = editRange.left.typeResponse;
+        } else if (index < editRange.preview.index) {
+          start = hours[index].hour;
+          startIndex = hours[index].index;
+          end = editRange.right.hour;
           typeResponse = editRange.right.typeResponse;
-        } else {
-          if (editRange.preview && index > editRange.preview.index) {
-            start = editRange.left.hour;
-            startIndex = editRange.left.index;
-            end = hours[index].hour;
-            typeResponse = editRange.left.typeResponse;
-          }
-
-          if (editRange.preview && index < editRange.preview.index) {
-            start = hours[index].hour;
-            startIndex = hours[index].index;
-            end = editRange.right.hour;
-            typeResponse = editRange.right.typeResponse;
-          }
         }
       }
 
@@ -241,9 +244,7 @@ export const SliderMultiRangeHours = ({
           typeResponse: hours[index].typeResponse,
         },
       });
-    }
-
-    if ([actions.add].includes(action) && dataToEdit.count === 2) {
+    } else if ([actions.add].includes(action) && dataToEdit.count === 2) {
       let startIndex = dataToEdit.startIndex;
       let endIndex = index;
 
@@ -269,43 +270,59 @@ export const SliderMultiRangeHours = ({
 
   return (
     <>
-      <div>{title}</div>
       <div className='slider-container'>
-        <div className='slider'>
-          <div className='hour type-disable'>
-            <div className='dot dot-any'></div>
+        <div className='slider-container-border'>
+          <div>{title}</div>
+          <div className='slider'>
+            <div className='hour type-disable'>
+              <div className='dot dot-any'></div>
+            </div>
+            {hours.map((node, index) => (
+              <SliderNode
+                key={node.hour}
+                {...node}
+                literalsTypesResponse={literalsTypesResponse}
+                index={index}
+                action={action}
+                previewRange={previewRange}
+                editRange={editRange}
+                onSelected={onSelected}
+                onPreviewRange={onPreviewRange}
+                onMouseDownNode={onMouseDownNode}
+                rangeMin={rangeMin}
+                count={hours.length}
+              />
+            ))}
           </div>
-          {hours.map((node, index) => (
-            <SliderNode
-              key={node.hour}
-              {...node}
-              literalsTypesResponse={literalsTypesResponse}
-              index={index}
-              action={action}
-              previewRange={previewRange}
-              editRange={editRange}
-              onSelected={onSelected}
-              onPreviewRange={onPreviewRange}
-              onMouseDownNode={onMouseDownNode}
-              rangeMin={rangeMin}
-              count={hours.length}
-            />
-          ))}
-        </div>
 
-        <div className='buttons'>
-          <button
-            disabled={!hours.length || action !== actions.none}
-            onClick={onEnableAdd}
-          >
-            {literalsButtons.textButtonAdd}
-          </button>
-          <button
-            onClick={() => onEnableDelete()}
-            disabled={!hours.length || action !== actions.none}
-          >
-            {literalsButtons.textButtonDelete}
-          </button>
+          <div className='buttons'>
+            <button
+              className={`button
+                ${
+                  [actions.add, actions.edit, actions.delete].includes(action)
+                    ? 'disable'
+                    : ''
+                }
+              `}
+              disabled={!hours.length || action !== actions.none}
+              onClick={onEnableAdd}
+            >
+              {literalsButtons.textButtonAdd}
+            </button>
+            <button
+              className={`button
+                ${
+                  [actions.add, actions.edit, actions.delete].includes(action)
+                    ? 'disable'
+                    : ''
+                }
+              `}
+              onClick={() => onEnableDelete()}
+              disabled={!hours.length || action !== actions.none}
+            >
+              {literalsButtons.textButtonDelete}
+            </button>
+          </div>
         </div>
       </div>
     </>
@@ -313,8 +330,9 @@ export const SliderMultiRangeHours = ({
 };
 
 SliderMultiRangeHours.propTypes = {
-  title: PropTypes.string.isRequired,
-  hoursDb: PropTypes.array.isRequired,
+  hoursDB: PropTypes.array.isRequired,
   literalsButtons: PropTypes.object.isRequired,
   literalsTypesResponse: PropTypes.object.isRequired,
+  setHoursDB: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
 };

@@ -1,7 +1,7 @@
 import { actions, typesResponse } from '../constants';
 import { paintHourRange } from './paintHourRange';
 
-export const generateHours = (hoursDb) => {
+export const generateHours = (hoursDB) => {
   let hours = [];
 
   for (let index = 0; index < 23; index++) {
@@ -9,8 +9,6 @@ export const generateHours = (hoursDb) => {
 
     for (let index2 = 0; index2 < 60; index2 += 15) {
       const minutos = index2 < 10 ? `0${index2}` : `${index2}`;
-
-      // const typeResponse = hoursDb.find((h)=>h.start  `${hour}:${minutos}`)
 
       hours.push({
         hour: `${hour}:${minutos}`,
@@ -26,8 +24,8 @@ export const generateHours = (hoursDb) => {
     node: true,
   });
 
-  if (hoursDb.length)
-    hoursDb.forEach((h) => {
+  if (hoursDB.length)
+    hoursDB.forEach((h) => {
       hours = paintHourRange(
         hours,
         {
