@@ -10,10 +10,11 @@ import {
   generateHours,
   getRangeByIndex,
   paintHourRange,
+  findRangeToEdit,
+  generateHoursDB,
+  findRangeToAdd,
 } from './helpers';
 import { SliderNode } from './SliderNode';
-import { findEditRange } from './helpers/findEditRange';
-import { generateHoursDB } from './helpers/generateHoursDB';
 
 export const SliderMultiRangeHours = ({
   title,
@@ -84,53 +85,62 @@ export const SliderMultiRangeHours = ({
     }
   };
 
-  const onSaveAdd = (node, index) => {
-    let updatedHours = [...hours];
+  const onAdd = (node, index) => {
+    const editRangeAux = findRangeToAdd(index, hours, rangeMin);
 
-    updatedHours[index] = {
-      ...node,
-      node: true,
-    };
+    if (editRangeAux?.selected) {
+      let updatedHours = [...hours];
 
-    const newDataToEdit = {
-      ...dataToEdit,
-      end: node.hour,
-    };
+      updatedHours[index] = {
+        ...node,
+        node: true,
+      };
 
-    updatedHours = onPaintHourRange(updatedHours, newDataToEdit);
-    const hoursDBAux = generateHoursDB(updatedHours);
+      const newDataToEdit = {
+        start: node.hour,
+        startIndex: index,
+        end: '',
+      };
 
-    setHoursDB(hoursDBAux);
-    setDataToEdit({
-      start: '',
-      startIndex: -1,
-      end: '',
-      endIndex: -1,
-    });
-    setPreviewRange({
-      startIndex: -1,
-      endIndex: -1,
-    });
-    setAction(actions.none);
-    setHours(updatedHours);
+      setDataToEdit(newDataToEdit);
+      setEditRange(editRangeAux);
+      setHours(updatedHours);
+    }
   };
 
-  const onAdd = (node, index) => {
-    let updatedHours = [...hours];
+  const onSaveAdd = (node, index) => {
+    const editRangeAux = findRangeToAdd(index, hours, rangeMin, editRange);
 
-    updatedHours[index] = {
-      ...node,
-      node: true,
-    };
+    if (editRangeAux?.selected) {
+      let updatedHours = [...hours];
 
-    const newDataToEdit = {
-      start: node.hour,
-      startIndex: index,
-      end: '',
-    };
+      updatedHours[index] = {
+        ...node,
+        node: true,
+      };
 
-    setDataToEdit(newDataToEdit);
-    setHours(updatedHours);
+      const newDataToEdit = {
+        ...dataToEdit,
+        end: node.hour,
+      };
+
+      updatedHours = onPaintHourRange(updatedHours, newDataToEdit);
+      const hoursDBAux = generateHoursDB(updatedHours);
+
+      setHoursDB(hoursDBAux);
+      setDataToEdit({
+        start: '',
+        startIndex: -1,
+        end: '',
+        endIndex: -1,
+      });
+      setPreviewRange({
+        startIndex: -1,
+        endIndex: -1,
+      });
+      setAction(actions.none);
+      setHours(updatedHours);
+    }
   };
 
   const onChangeTypeResponse = (index) => {
@@ -150,7 +160,7 @@ export const SliderMultiRangeHours = ({
 
   const onEdit = (index) => {
     if (index > 0 && index + 1 < hours.length) {
-      const editRangeAux = findEditRange(index, hours);
+      const editRangeAux = findRangeToEdit(index, hours);
 
       setEditRange(editRangeAux);
       setAction(actions.edit);
@@ -292,15 +302,14 @@ export const SliderMultiRangeHours = ({
         endIndex = dataToEdit.startIndex;
       }
 
+      if (startIndex < editRange.left.index) startIndex = editRange.left.index;
+      if (endIndex > editRange.right.index) endIndex = editRange.right.index;
+
       setPreviewRange({
         startIndex,
         endIndex,
       });
     }
-  };
-
-  const onMouseDownNode = (index, node) => {
-    if (node) console.log(index);
   };
 
   const onEnableDelete = () => {
@@ -327,7 +336,6 @@ export const SliderMultiRangeHours = ({
                 editRange={editRange}
                 onSelected={onSelected}
                 onPreviewRange={onPreviewRange}
-                onMouseDownNode={onMouseDownNode}
                 rangeMin={rangeMin}
                 cantHour={hours.length}
               />

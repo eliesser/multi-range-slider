@@ -25,7 +25,12 @@ export const SliderNode = ({
   let showDotHover = false;
   let showLabelHour = false;
 
-  if ([actions.add, actions.edit].includes(action)) {
+  if (
+    [actions.add].includes(action) ||
+    ([actions.edit].includes(action) &&
+      editRange?.preview?.index <= editRange?.right?.index - rangeMin &&
+      editRange?.preview?.index >= editRange?.left?.index + rangeMin)
+  ) {
     showHover = true;
   } else {
     showHover = false;
@@ -37,7 +42,10 @@ export const SliderNode = ({
       index > 0 &&
       index + 1 < cantHour) ||
     ([actions.none].includes(action) && !node) ||
-    [actions.add].includes(action)
+    [actions.add].includes(action) ||
+    ([actions.edit].includes(action) &&
+      editRange?.preview?.index <= editRange?.right?.index - rangeMin &&
+      editRange?.preview?.index >= editRange?.left?.index + rangeMin)
   ) {
     showCursorPointer = true;
   } else {
@@ -56,7 +64,6 @@ export const SliderNode = ({
         showNode = true;
       } else {
         showNode = false;
-        showHover = true;
         showCursorPointer = true;
       }
     } else {
@@ -83,19 +90,30 @@ export const SliderNode = ({
     }
   }
 
-  if (
-    [actions.add].includes(action) &&
-    index >= previewRange.startIndex &&
-    index < previewRange.endIndex
-  )
-    showPreviewColorAdd = true;
-
   if ([hour.split(':')[0] + ':00', '23:59'].includes(hour)) showDot00 = true;
 
   if ([actions.delete].includes(action) && index > 0 && index + 1 < cantHour)
     showDotFocus = true;
 
-  if (index > 0 && index + 1 < cantHour) showDotHover = true;
+  if (
+    (index > 0 && index + 1 < cantHour && ![actions.edit].includes(action)) ||
+    ([actions.edit].includes(action) &&
+      editRange?.preview?.index <= editRange?.right?.index - rangeMin &&
+      editRange?.preview?.index >= editRange?.left?.index + rangeMin)
+  )
+    showDotHover = true;
+
+  if ([actions.add].includes(action) && editRange?.selected) {
+    if (index >= previewRange.startIndex && index < previewRange.endIndex) {
+      showPreviewColorAdd = true;
+    } else if (
+      index < editRange?.left?.index ||
+      index > editRange?.right?.index
+    ) {
+      showHover = false;
+      showCursorPointer = false;
+    }
+  }
 
   if ([`${hour.split(':')[0]}:00`, '23:59'].includes(hour))
     showLabelHour = true;
