@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SliderMultiRangeHours } from '../SliderMultiRangeHours/SliderMultiRangeHours';
-import { typesResponse } from '../SliderMultiRangeHours/constants';
+import { SliderMultiRangeHours, typesResponse } from '../SliderMultiRangeHours';
 
 const literalsButtons = { textButtonAdd: 'Add', textButtonDelete: 'Delete' };
 const literalsTypesResponse = {
@@ -13,16 +12,16 @@ const literalsTypesResponse = {
 const hour1 = [
   {
     start: '00:00',
-    end: '15:00',
+    end: '09:00',
     typeResponse: typesResponse.typeDisable,
   },
   {
-    start: '15:00',
-    end: '19:00',
+    start: '09:00',
+    end: '10:00',
     typeResponse: typesResponse.typeSmartChat,
   },
   {
-    start: '19:00',
+    start: '10:00',
     end: '23:59',
     typeResponse: typesResponse.typeDisable,
   },
