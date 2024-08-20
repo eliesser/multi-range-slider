@@ -1,88 +1,106 @@
 import { useEffect, useState } from 'react';
-import { SliderMultiRangeHours, typesResponse } from '../SliderMultiRangeHours';
 
-const literalsButtons = { textButtonAdd: 'Add', textButtonDelete: 'Delete' };
-const literalsTypesResponse = {
-  'type-disable': 'Disable',
-  'type-automatic-response': 'Automatic Response',
-  'type-operator-assistance': 'Operator Assistance',
-  'type-smart-chat': 'SmartChat',
-};
+import { SliderMultiRangesHours, tags } from '../SliderMultiRangesHours';
+import { getSchedulesBD, buildRangeHoursByDaysOfWeek, saveSchedulesBD, prepareSchedulesToSave, daysOfWeekObject } from './helpers'
+import './styles.scss'
 
-const hour1 = [
-  {
-    start: '00:00',
-    end: '09:00',
-    typeResponse: typesResponse.typeDisable,
-  },
-  {
-    start: '09:00',
-    end: '10:00',
-    typeResponse: typesResponse.typeSmartChat,
-  },
-  {
-    start: '10:00',
-    end: '23:59',
-    typeResponse: typesResponse.typeDisable,
-  },
-];
-
-const hour2 = [
-  {
-    start: '00:00',
-    end: '09:00',
-    typeResponse: typesResponse.typeSmartChat,
-  },
-  {
-    start: '09:00',
-    end: '14:00',
-    typeResponse: typesResponse.typeAutomaticResponse,
-  },
-  {
-    start: '14:00',
-    end: '15:00',
-    typeResponse: typesResponse.typeSmartChat,
-  },
-  {
-    start: '15:00',
-    end: '18:00',
-    typeResponse: typesResponse.typeAutomaticResponse,
-  },
-  {
-    start: '18:00',
-    end: '23:59',
-    typeResponse: typesResponse.typeSmartChat,
-  },
-];
+const literals = {}
+let literalsButtons = {}
+const literalsTypesResponse = {}
 
 export const Slider = () => {
-  const [hoursDBMonday, setHoursDBMonday] = useState(hour1);
-  const [hoursDBTuesday, setHoursDBTuesday] = useState(hour2);
+  const [rangeHoursByDaysOfWeek, setRangeHoursByDaysOfWeek] = useState({})
+  const [schedules, setSchedules] = useState({})
 
   useEffect(() => {
-    console.log(hoursDBMonday);
-  }, [hoursDBMonday]);
+    literalsButtons = {
+      textButtonAdd: 'Add section',
+      textButtonCancelAdd: 'Cancel add',
+      textButtonDelete: 'Delete section',
+      textButtonCancelDelete: 'Cancel delete'
+    }
 
-  useEffect(() => {
-    console.log(hoursDBTuesday);
-  }, [hoursDBTuesday]);
+    literalsTypesResponse[tags.disable] = 'Disable'
+    literalsTypesResponse[tags.automaticResponse] = 'Automatic response'
+    literalsTypesResponse[tags.operatorAssistance] = 'Operator assistance'
+    literalsTypesResponse[tags.smartChat] = 'SmartChat'
+
+    literals['title'] = 'Title'
+
+    const rangeHoursByDaysOfWeekAux = { ...rangeHoursByDaysOfWeek }
+
+    const hours = [
+      {
+        start: '00:00',
+        end: '23:59',
+        tag: tags.disable,
+      },
+    ]
+
+    for (const day in daysOfWeekObject) {
+      if (Object.hasOwnProperty.call(daysOfWeekObject, day)) {
+        literals[day] = `${day}`
+        rangeHoursByDaysOfWeekAux[day] = hours
+      }
+    }
+
+    setRangeHoursByDaysOfWeek(rangeHoursByDaysOfWeekAux)
+
+    getSchedules()
+  }, [])
+
+  const onSetHoursDB = (hours, day) => {
+    const rangeHoursByDaysOfWeekAux = { ...rangeHoursByDaysOfWeek }
+
+    rangeHoursByDaysOfWeekAux[day] = hours
+
+    setRangeHoursByDaysOfWeek(rangeHoursByDaysOfWeekAux)
+
+    buildSchedules(rangeHoursByDaysOfWeekAux)
+  }
+
+  const getSchedules = async () => {
+    const data = await getSchedulesBD()
+
+    console.log(data)
+
+    setSchedules({ automaticResponsesVA: data[0], operatorAssistantVA: data[1], assistant: data[2] })
+
+    let hours = {}
+
+    for (const typesResp of data) {
+      buildRangeHoursByDaysOfWeek(hours, typesResp)
+    }
+
+    setRangeHoursByDaysOfWeek(hours)
+  }
+
+  const buildSchedules = async (rangeHoursByDaysOfWeekAux) => {
+    const schedulesAux = prepareSchedulesToSave(rangeHoursByDaysOfWeekAux, schedules)
+
+    await saveSchedulesBD(schedulesAux)
+
+    setSchedules(schedulesAux)
+  }
 
   return (
     <>
-      <SliderMultiRangeHours
-        title='Lunes'
-        hoursDB={hoursDBMonday}
-        setHoursDB={setHoursDBMonday}
-        literalsButtons={literalsButtons}
-        literalsTypesResponse={literalsTypesResponse}
-      />
-      <SliderMultiRangeHours
-        title='Martes'
-        hoursDB={hoursDBTuesday}
-        setHoursDB={setHoursDBTuesday}
-        literalsButtons={literalsButtons}
-        literalsTypesResponse={literalsTypesResponse}
-      />
+      <section className='container-sliders'>
+        {
+          Object.keys(rangeHoursByDaysOfWeek).map((day) => (
+            <SliderMultiRangesHours
+              key={day}
+              day={day}
+              title={(literals[day])}
+              hoursDB={rangeHoursByDaysOfWeek[day]}
+              onSetHoursDB={onSetHoursDB}
+              literalsButtons={literalsButtons}
+              literalsTypesResponse={literalsTypesResponse}
+              rangeMin={2}
+            />
+          ))
+        }
+      </section>
     </>
   );
 };

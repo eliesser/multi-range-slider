@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 
-import { actions, typesResponse } from './constants';
+import { actions, tags } from './constants'
 
 export const SliderNode = ({
   action,
@@ -14,16 +14,16 @@ export const SliderNode = ({
   onSelected,
   previewRange,
   rangeMin,
-  typeResponse,
+  tag,
 }) => {
-  let showNode = false;
-  let showHover = false;
-  let showCursorPointer = false;
-  let showPreviewColorAdd = false;
-  let showDot00 = false;
-  let showDotFocus = false;
-  let showDotHover = false;
-  let showLabelHour = false;
+  let showNode = false
+  let showHover = false
+  let showCursorPointer = false
+  let showPreviewColorAdd = false
+  let showDot00 = false
+  let showDotFocus = false
+  let showDotHover = false
+  let showLabelHour = false
 
   if (
     [actions.add].includes(action) ||
@@ -31,9 +31,9 @@ export const SliderNode = ({
       editRange?.preview?.index <= editRange?.right?.index - rangeMin &&
       editRange?.preview?.index >= editRange?.left?.index + rangeMin)
   ) {
-    showHover = true;
+    showHover = true
   } else {
-    showHover = false;
+    showHover = false
   }
 
   if (
@@ -47,13 +47,13 @@ export const SliderNode = ({
       editRange?.preview?.index <= editRange?.right?.index - rangeMin &&
       editRange?.preview?.index >= editRange?.left?.index + rangeMin)
   ) {
-    showCursorPointer = true;
+    showCursorPointer = true
   } else {
-    showCursorPointer = false;
+    showCursorPointer = false
   }
 
   if (![actions.edit].includes(action)) {
-    showNode = node;
+    showNode = node
   } else {
     if (node) {
       if (
@@ -61,20 +61,20 @@ export const SliderNode = ({
         (index !== editRange?.selected?.index &&
           editRange?.preview?.index <= editRange?.right?.index - rangeMin)
       ) {
-        showNode = true;
+        showNode = true
       } else {
-        showNode = false;
-        showCursorPointer = true;
+        showNode = false
+        showCursorPointer = true
       }
     } else {
       if (
         editRange?.preview?.index <= editRange?.right?.index - rangeMin &&
         editRange?.preview?.index >= editRange?.left?.index + rangeMin
       ) {
-        showHover = true;
-        showCursorPointer = true;
+        showHover = true
+        showCursorPointer = true
       } else {
-        showHover = false;
+        showHover = false
       }
 
       if (
@@ -83,17 +83,17 @@ export const SliderNode = ({
         (index === editRange?.left?.index + rangeMin &&
           editRange?.preview?.index < editRange?.left?.index + rangeMin)
       ) {
-        showNode = true;
+        showNode = true
       } else {
-        showNode = false;
+        showNode = false
       }
     }
   }
 
-  if ([hour.split(':')[0] + ':00', '23:59'].includes(hour)) showDot00 = true;
+  if ([hour.split(':')[0] + ':00', '23:59'].includes(hour)) showDot00 = true
 
   if ([actions.delete].includes(action) && index > 0 && index + 1 < cantHour)
-    showDotFocus = true;
+    showDotFocus = true
 
   if (
     (index > 0 && index + 1 < cantHour && ![actions.edit].includes(action)) ||
@@ -101,62 +101,39 @@ export const SliderNode = ({
       editRange?.preview?.index <= editRange?.right?.index - rangeMin &&
       editRange?.preview?.index >= editRange?.left?.index + rangeMin)
   )
-    showDotHover = true;
+    showDotHover = true
 
   if ([actions.add].includes(action) && editRange?.selected) {
     if (index >= previewRange.startIndex && index < previewRange.endIndex) {
-      showPreviewColorAdd = true;
+      showPreviewColorAdd = true
     } else if (
       index < editRange?.left?.index ||
       index > editRange?.right?.index
     ) {
-      showHover = false;
-      showCursorPointer = false;
+      showHover = false
+      showCursorPointer = false
     }
   }
 
   if ([`${hour.split(':')[0]}:00`, '23:59'].includes(hour))
-    showLabelHour = true;
+    showLabelHour = true
 
   return (
     <div
-      className={`
-        hour
-        ${showNode ? ' node' : ''}
-        ${showHover ? ' hour-hover' : ''}
-        ${showCursorPointer ? ' cursor-pointer' : ''}
-        ${
-          showPreviewColorAdd
-            ? ' ' + typesResponse.typeEdit
-            : ' ' + typeResponse
-        }
-      `}
+      className={`hour${showNode ? ' node' : ''} ${showHover ? ' hour-hover' : ''}${showCursorPointer ? ' cursor-pointer' : ''}${index + 1 === cantHour ? ' bg-white' : showPreviewColorAdd ? ' ' + tags.typeEdit : ' ' + tag}`}
       onMouseEnter={() => onPreviewRange(index)}
-      onClick={() => onSelected({ hour, typeResponse, node }, index, action)}
+      onClick={() => onSelected({ hour, tag, node }, index, action)}
     >
-      <div className='tooltip'>
-        <span className='tooltip-text'>
-          {`${
-            node || [actions.add, actions.edit].includes(action)
-              ? hour
-              : literalsTypesResponse[typeResponse]
-          }`}
-        </span>
-        <div
-          className={`
-            dot
-            ${showDot00 ? ' dot-00' : ' dot-any'}
-            ${[actions.edit].includes(action) ? ' edit' : ''}
-            ${showDotFocus ? ' focus' : ''}
-            ${showDotHover ? ' hover' : ''}
-          `}
-        ></div>
-      </div>
-
+      <span className='tooltip-text'>
+        {`${node || [actions.add, actions.edit].includes(action) ? hour : literalsTypesResponse[tag]}`}
+      </span>
+      <div
+        className={`dot${showDot00 ? ' dot-00' : ' dot-any'}${[actions.edit].includes(action) ? ' edit' : ''}${showDotFocus ? ' focus' : ''}${showDotHover ? ' hover' : ''}`}
+      ></div>
       {showLabelHour && <div className='hour-value'>{hour}</div>}
     </div>
-  );
-};
+  )
+}
 
 SliderNode.propTypes = {
   action: PropTypes.string.isRequired,
@@ -167,8 +144,8 @@ SliderNode.propTypes = {
   literalsTypesResponse: PropTypes.object.isRequired,
   node: PropTypes.bool.isRequired,
   previewRange: PropTypes.object.isRequired,
-  typeResponse: PropTypes.string.isRequired,
+  tag: PropTypes.string.isRequired,
   rangeMin: PropTypes.number.isRequired,
   onPreviewRange: PropTypes.func.isRequired,
   onSelected: PropTypes.func.isRequired,
-};
+}

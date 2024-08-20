@@ -1,30 +1,30 @@
-import { actions, typesResponse } from '../constants';
-import { getDateTimeByTimeHHMM, getNextTypeResponse } from '.';
+import { actions, tags } from '../constants'
+import { getDateTimeByTimeHHMM, getNextTypeResponse } from '.'
 
 export const paintHourRange = (
   hours,
   newDataToEdit,
   action,
-  typeResponse = null
+  tag = null
 ) => {
-  let dateRangeStart = getDateTimeByTimeHHMM(newDataToEdit.start);
-  let dateRangeEnd = getDateTimeByTimeHHMM(newDataToEdit.end);
+  let dateRangeStart = getDateTimeByTimeHHMM(newDataToEdit.start)
+  let dateRangeEnd = getDateTimeByTimeHHMM(newDataToEdit.end)
 
   if (dateRangeEnd < dateRangeStart) {
-    dateRangeStart = getDateTimeByTimeHHMM(newDataToEdit.end);
-    dateRangeEnd = getDateTimeByTimeHHMM(newDataToEdit.start);
+    dateRangeStart = getDateTimeByTimeHHMM(newDataToEdit.end)
+    dateRangeEnd = getDateTimeByTimeHHMM(newDataToEdit.start)
   }
 
   const auxHours = hours.map((node) => {
-    const dateNode = getDateTimeByTimeHHMM(node.hour);
+    const dateNode = getDateTimeByTimeHHMM(node.hour)
     if (dateNode >= dateRangeStart && dateNode < dateRangeEnd) {
       return {
         ...node,
-        typeResponse: typeResponse
-          ? typeResponse
+        tag: tag
+          ? tag
           : action === actions.add
-          ? typesResponse.typeOperatorAssistance
-          : getNextTypeResponse(node.typeResponse),
+            ? tags.operatorAssistance
+            : getNextTypeResponse(node.tag),
         node:
           ![actions.edit, actions.delete].includes(action) &&
           node.hour === newDataToEdit.start
@@ -32,9 +32,9 @@ export const paintHourRange = (
             : action === actions.add &&
               dateNode > dateRangeStart &&
               dateNode < dateRangeEnd
-            ? false
-            : node.node,
-      };
+              ? false
+              : node.node,
+      }
     } else {
       return {
         ...node,
@@ -43,9 +43,9 @@ export const paintHourRange = (
           node.hour === newDataToEdit.end
             ? true
             : node.node,
-      };
+      }
     }
-  });
+  })
 
-  return [...auxHours];
-};
+  return [...auxHours]
+}

@@ -1,0 +1,114 @@
+.modify-schedules {
+  margin-top: 3rem;
+
+  .header {
+    display: flex;
+    flex-direction: column;
+
+    /* background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1050; */
+
+    .title {
+      color: var(--color-primary-400, #E87721);
+      font-family: Raleway;
+      font-size: 2rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+
+      .icon {
+        height: 2.5rem;
+        width: 2.5rem;
+      }
+    }
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: row;
+    color: #000;
+    font-variant-numeric: lining-nums proportional-nums;
+    font-family: Raleway;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    gap: 3.75rem;
+    margin-top: 3rem;
+
+    /* background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1050; */
+
+    @media screen and (max-width: 900px) {
+      flex-direction: column;
+      gap: 1.875rem;
+    }
+
+    .item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+
+      .input-controls__switch {
+        height: 22.5px;
+        width: 45px;
+
+        &::before {
+          height: 18px;
+          width: 18px;
+        }
+      }
+
+      .input-controls.automaticResponsesVA input[type=checkbox]:checked+.input-controls__switch {
+        background-color: #f1a776;
+      }
+
+      .input-controls.operatorAssistantVA input[type=checkbox]:checked+.input-controls__switch {
+        background-color: #924e1e;
+      }
+
+      .input-controls.smartChat input[type=checkbox]:checked+.input-controls__switch {
+        background-color: #dd611d;
+      }
+
+      .input-controls input[type=checkbox]:checked+.input-controls__switch::before {
+        transform: translateX(23px);
+      }
+
+      .square {
+        width: 3.125rem;
+        height: 1.5rem;
+        border-radius: 0.5rem;
+
+        &.typeDisable {
+          background-color: #9d9d9d;
+        }
+
+        &.automaticResponsesVA {
+          background-color: #f1a776;
+        }
+
+        &.operatorAssistantVA {
+          background-color: #924e1e;
+        }
+
+        &.smartChat {
+          background-color: #dd611d;
+        }
+      }
+    }
+  }
+
+  .container-sliders {
+    display: flex;
+    flex-direction: column;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    gap: 2.5rem;
+  }
+}
